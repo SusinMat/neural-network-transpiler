@@ -1,6 +1,11 @@
 # Neural Network Transpiler
 Convert a model from tflite to a C++ source code using Android Neural Network API.
 
+## Prerequisites
+- Boost library
+    - `sudo apt-get install libboost-all-dev #ubuntu`
+    - `sudo pacman -S boost #arch-linux`
+
 ## Build
 In a project directory create a build directory
 ```

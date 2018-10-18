@@ -52,24 +52,24 @@ int main(int argc, char **argv) {
   try {
     po::options_description desc{"Options"};
     desc.add_options()
+      ("dot,d", po::value<std::string>(), "generate dot file")
       ("help,h", "Help screen")
-      ("info,i", po::bool_switch(&flag_info), "Info about model")
-      ("dot,d", po::value<std::string>(), "Generate dot file")
-      ("model,m", po::value<std::string>(), "flatbuffer neural network model")
-      ("path,p", po::value<std::string>(), "store generated files on this path")
-      ("javapackage,j", po::value<std::string>(), "java package for JNI");
+      ("info,i", po::bool_switch(&flag_info), "print info about model")
+      ("javapackage,j", po::value<std::string>(), "Java package for JNI")
+      ("model,m", po::value<std::string>(), "path to flatbuffer model")
+      ("path,p", po::value<std::string>(), "path in which to save output files");
 
     po::variables_map vm;
     po::store(parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
 
-    if (vm.count("help")) {
+    if (vm.count("help") != 0) {
       std::cout << desc << '\n';
       return 0;
     }
 
-    if (!vm.count("model")) {
-      std::cerr << "--model must not be empty" << '\n';
+    if (vm.count("model") < 1) {
+      std::cerr << "--model requires an argument" << '\n';
       std::cerr << desc << '\n';
       return 0;
     }
@@ -81,20 +81,20 @@ int main(int argc, char **argv) {
       return 0;
     }
 
-    if (vm.count("dot")) {
+    if (vm.count("dot") != 0) {
       str_dot = vm["dot"].as<std::string>();
       GenerateDotFile(str_dot, str_model);
       return 0;
     }
 
-    if (vm.count("path")) {
+    if (vm.count("path") != 0) {
       str_path = vm["path"].as<std::string>();
     } else {
       str_path = "./";
     }
 
-    if (!vm.count("javapackage")) {
-      std::cerr << "--javapackage must not be empty" << '\n';
+    if (vm.count("javapackage") < 1) {
+      std::cerr << "--javapackage requires an argument" << '\n';
       std::cerr << desc << '\n';
       return 0;
     }

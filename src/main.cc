@@ -7,8 +7,8 @@
 #include "dump.h"
 #include "exception.h"
 
-void GenerateJniFiles(const std::string& str_model, const std::string& str_path,
-    const std::string& java_package) {
+void GenerateJniFiles(const std::string& str_model, const std::string& str_path, const std::string& java_package)
+{
   nnt::Model model(str_model);
   nnt::CppGen cpp(model);
   boost::filesystem::path path(str_path);
@@ -16,8 +16,8 @@ void GenerateJniFiles(const std::string& str_model, const std::string& str_path,
   std::cout << "Finish!\n";
 }
 
-void GenerateDotFile(const std::string& filename,
-    const std::string& str_model) {
+void GenerateDotFile(const std::string& filename, const std::string& str_model)
+{
   nnt::Model model(str_model);
   nnt::DumpGraph dump(model);
 
@@ -35,29 +35,41 @@ void GenerateDotFile(const std::string& filename,
   std::cout << "Dot file: '" << filename << "' generated.\n";
 }
 
-void Info(const std::string& str_model) {
+void Info(const std::string& str_model)
+{
   nnt::Model model(str_model);
   nnt::DumpGraph dump(model);
   std::cout << dump.Info();
 }
 
-int main(int argc, char **argv) {
+void PrintDump(const std::string& str_model)
+{
+  nnt::Model model(str_model);
+  nnt::DumpGraph dump(model);
+  dump.Print();
+  std::cout << std::endl;
+}
+
+int main(int argc, char **argv)
+{
   namespace po = boost::program_options;
   std::string str_path;
   std::string java_package;
   std::string str_model;
   std::string str_dot;
   bool flag_info;
+  bool flag_dump;
 
   try {
     po::options_description desc{"Options"};
     desc.add_options()
-      ("dot,d", po::value<std::string>(), "generate dot file")
+      ("dump,d", po::bool_switch(&flag_dump), "print info about tensors and operators of the model")
+      ("graph,g", po::value<std::string>(), "generate dot file")
       ("help,h", "Help screen")
-      ("info,i", po::bool_switch(&flag_info), "print info about model")
+      ("info,i", po::bool_switch(&flag_info), "print info about input/output of the model")
       ("javapackage,j", po::value<std::string>(), "Java package for JNI")
       ("model,m", po::value<std::string>(), "path to flatbuffer model")
-      ("path,p", po::value<std::string>(), "path in which to save output files");
+      ("path,p", po::value<std::string>(), "path in which to save output files [default: .]");
 
     po::variables_map vm;
     po::store(parse_command_line(argc, argv, desc), vm);
@@ -78,7 +90,10 @@ int main(int argc, char **argv) {
 
     if (flag_info) {
       Info(str_model);
-      return 0;
+    }
+
+    if (flag_dump) {
+      PrintDump(str_model);
     }
 
     if (vm.count("dot") != 0) {
@@ -93,15 +108,13 @@ int main(int argc, char **argv) {
       str_path = "./";
     }
 
-    if (vm.count("javapackage") < 1) {
-      std::cerr << "--javapackage requires an argument" << '\n';
-      std::cerr << desc << '\n';
-      return 0;
+    if (vm.count("javapackage") != 0) {
+      java_package = vm["javapackage"].as<std::string>();
+      GenerateJniFiles(str_model, str_path, java_package);
     }
 
-    java_package = vm["javapackage"].as<std::string>();
+    return 0;
 
-    GenerateJniFiles(str_model, str_path, java_package);
   } catch (const boost::program_options::error &e) {
     std::cerr << "Error: " << e.what() << '\n';
   } catch (const nnt::Exception& e) {

@@ -599,7 +599,7 @@ class Tensor {
   }
 
   bool HasQuantization() const {
-    return bool(quantization_);
+    return bool(quantization_) && (*quantization_).scale.size() > 0 && (*quantization_).zero_point.size() > 0;
   }
 
   const QuantizationParameters& quantization() const {

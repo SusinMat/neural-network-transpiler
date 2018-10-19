@@ -88,8 +88,8 @@ namespace nnt {
         ss << "\n";
       }
     }
-
     ss << "\n";
+
     ss << "::Outputs::\n";
     for (const auto& i : graph.Outputs()) {
       ss << " " << tensors[i].name() << "<" << TensorType(tensors[i]) << ">"
@@ -111,6 +111,7 @@ namespace nnt {
     std::stringstream ss;
     Graph& graph = model_.graph();
 
+    ss << "\n";
     return ss.str();
   }
 
@@ -187,9 +188,6 @@ namespace nnt {
     return std::string();
   }
 
-
-
-
   std::string DumpGraph::FormatTensorName(const std::string& name) {
     size_t pos = name.find_last_of('/');
 
@@ -211,7 +209,5 @@ namespace nnt {
     str = str.substr(0, str.length() - 2);
     return str;
   }
-
-
 
 }

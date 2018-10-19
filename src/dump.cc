@@ -5,50 +5,54 @@
 
 namespace nnt {
 
-void DumpGraph::Print() {
+std::string DumpGraph::Dump() {
+  std::stringstream ss;
   Graph& graph = model_.graph();
 
-  std::cout << "Inputs:";
+  ss << "Inputs:";
   for (const auto& i : graph.Inputs()) {
-    std::cout << " " << i;
+    ss << " " << i;
   }
-  std::cout << "\n";
+  ss << "\n";
 
-  std::cout << "Outputs:";
+  ss << "Outputs:";
   for (const auto& i : graph.Outputs()) {
-    std::cout << " " << i;
+    ss << " " << i;
   }
-  std::cout << "\n";
+  ss << "\n";
 
-  std::cout << "\nTensors:\n";
+  ss << "\nTensors:\n";
   int count = 0;
   for (const auto& tensor: graph.Tensors()) {
-    std::cout << "[" << count++ << "] ";
-    std::cout << "name: " << tensor.name() << " [ ";
+    ss << "[" << count++ << "] ";
+    ss << "name: " << tensor.name() << " [ ";
     for (const auto&i : tensor.shape()) {
-      std::cout << i << " ";
+      ss << i << " ";
     }
-    std::cout << "] ";
-    std::cout << "buffer: " << tensor.buffer_index() << "\n";
+    ss << "] ";
+    ss << "buffer: " << tensor.buffer_index() << "\n";
   }
 
-  std::cout << "\nOperators:\n";
+  ss << "\nOperators:\n";
   for (const auto& op: graph.Operators()) {
-    std::cout << "index: " << op.index() << ", ";
-    std::cout << "builtin_op: " << op.builtin_op_str() << ", ";
+    ss << "index: " << op.index() << ", ";
+    ss << "builtin_op: " << op.builtin_op_str() << ", ";
 
-    std::cout << "inputs:";
+    ss << "inputs:";
     for (const auto& i : op.inputs()) {
-      std::cout << " " << i;
+      ss << " " << i;
     }
-    std::cout << ", ";
+    ss << ", ";
 
-    std::cout << "outputs:";
+    ss << "outputs:";
     for (const auto& i : op.outputs()) {
-      std::cout << " " << i;
+      ss << " " << i;
     }
-    std::cout << "\n";
+    ss << "\n";
   }
+
+  ss << "\n";
+  return ss.str();
 }
 
 std::string DumpGraph::TensorType(const Tensor& tensor) {

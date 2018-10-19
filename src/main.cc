@@ -46,8 +46,7 @@ void PrintDump(const std::string& str_model)
 {
   nnt::Model model(str_model);
   nnt::DumpGraph dump(model);
-  dump.Print();
-  std::cout << std::endl;
+  std::cout << dump.Dump();
 }
 
 int main(int argc, char **argv)
@@ -65,7 +64,7 @@ int main(int argc, char **argv)
     desc.add_options()
       ("dump,d", po::bool_switch(&flag_dump), "print info about tensors and operators of the model")
       ("graph,g", po::value<std::string>(), "generate dot file")
-      ("help,h", "Help screen")
+      ("help,h", "show this help screen")
       ("info,i", po::bool_switch(&flag_info), "print info about input/output of the model")
       ("javapackage,j", po::value<std::string>(), "Java package for JNI")
       ("model,m", po::value<std::string>(), "path to flatbuffer model")
@@ -81,7 +80,7 @@ int main(int argc, char **argv)
     }
 
     if (vm.count("model") < 1) {
-      std::cerr << "--model requires an argument" << '\n';
+      std::cerr << "--model is required" << '\n';
       std::cerr << desc << '\n';
       return 0;
     }

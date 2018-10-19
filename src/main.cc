@@ -35,7 +35,7 @@ void GenerateDotFile(const std::string& filename, const std::string& str_model)
   std::cout << "Dot file: '" << filename << "' generated.\n";
 }
 
-void Info(const std::string& str_model)
+void PrintInfo(const std::string& str_model)
 {
   nnt::Model model(str_model);
   nnt::DumpGraph dump(model);
@@ -49,6 +49,13 @@ void PrintDump(const std::string& str_model)
   std::cout << dump.Dump();
 }
 
+void PrintWeights(const std::string& str_model)
+{
+  nnt::Model model(str_model);
+  nnt::DumpGraph dump(model);
+  std::cout << dump.Weights();
+}
+
 int main(int argc, char **argv)
 {
   namespace po = boost::program_options;
@@ -58,6 +65,7 @@ int main(int argc, char **argv)
   std::string str_dot;
   bool flag_info;
   bool flag_dump;
+  bool flag_weights;
 
   try {
     po::options_description desc{"Options"};
@@ -65,10 +73,12 @@ int main(int argc, char **argv)
       ("dump,d", po::bool_switch(&flag_dump), "print info about tensors and operators of the model")
       ("graph,g", po::value<std::string>(), "generate dot file")
       ("help,h", "show this help screen")
-      ("info,i", po::bool_switch(&flag_info), "print info about input/output of the model")
+      ("info,i", po::bool_switch(&flag_info), "print high-level info about input/output of the model")
       ("javapackage,j", po::value<std::string>(), "Java package for JNI")
       ("model,m", po::value<std::string>(), "path to flatbuffer model")
-      ("path,p", po::value<std::string>(), "path in which to save output files [default: .]");
+      ("path,p", po::value<std::string>(), "path in which to save output files [default: .]")
+      ("weights,w", po::bool_switch(&flag_weights), "print weights of the model")
+      ;
 
     po::variables_map vm;
     po::store(parse_command_line(argc, argv, desc), vm);
@@ -88,11 +98,15 @@ int main(int argc, char **argv)
     str_model = vm["model"].as<std::string>();
 
     if (flag_info) {
-      Info(str_model);
+      PrintInfo(str_model);
     }
 
     if (flag_dump) {
       PrintDump(str_model);
+    }
+
+    if (flag_weights) {
+      PrintWeights(str_model);
     }
 
     if (vm.count("dot") != 0) {

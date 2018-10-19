@@ -46,7 +46,21 @@ void PrintDump(const std::string& str_model)
 {
   nnt::Model model(str_model);
   nnt::DumpGraph dump(model);
-  std::cout << dump.Dump();
+  std::cout << dump.Tensors() << dump.Operators();
+}
+
+void PrintTensors(const std::string& str_model)
+{
+  nnt::Model model(str_model);
+  nnt::DumpGraph dump(model);
+  std::cout << dump.Tensors();
+}
+
+void PrintOperators(const std::string& str_model)
+{
+  nnt::Model model(str_model);
+  nnt::DumpGraph dump(model);
+  std::cout << dump.Operators();
 }
 
 void PrintWeights(const std::string& str_model)
@@ -64,19 +78,21 @@ int main(int argc, char **argv)
   std::string str_model;
   std::string str_dot;
   bool flag_info;
-  bool flag_dump;
+  bool flag_operators;
+  bool flag_tensors;
   bool flag_weights;
 
   try {
     po::options_description desc{"Options"};
     desc.add_options()
-      ("dump,d", po::bool_switch(&flag_dump), "print info about tensors and operators of the model")
       ("graph,g", po::value<std::string>(), "generate dot file")
       ("help,h", "show this help screen")
       ("info,i", po::bool_switch(&flag_info), "print high-level info about input/output of the model")
       ("javapackage,j", po::value<std::string>(), "Java package for JNI")
       ("model,m", po::value<std::string>(), "path to flatbuffer model")
+      ("operators,o", po::bool_switch(&flag_operators), "print info about operators of the model")
       ("path,p", po::value<std::string>(), "path in which to save output files [default: .]")
+      ("tensors,t", po::bool_switch(&flag_tensors), "print info about tensors of the model")
       ("weights,w", po::bool_switch(&flag_weights), "print weights of the model")
       ;
 
@@ -101,8 +117,12 @@ int main(int argc, char **argv)
       PrintInfo(str_model);
     }
 
-    if (flag_dump) {
-      PrintDump(str_model);
+    if (flag_operators) {
+      PrintOperators(str_model);
+    }
+
+    if (flag_tensors) {
+      PrintTensors(str_model);
     }
 
     if (flag_weights) {

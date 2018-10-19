@@ -12,13 +12,16 @@ class DumpGraph {
  public:
   DumpGraph(Model& model): model_(model) {}
 
-  std::string Dot();
 
-  std::string Dump();
+  std::string Tensors();
+
+  std::string Operators();
 
   std::string Info();
 
   std::string Weights();
+
+  std::string Dot();
 
   std::string TensorShape(const Tensor& tensor);
 

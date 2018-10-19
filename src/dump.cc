@@ -5,21 +5,24 @@
 
 namespace nnt {
 
-  std::string DumpGraph::Dump() {
+  template<class T>
+    std::string VectorToStr(const std::vector<T>& vec) {
+      std::stringstream ss;
+
+      ss << "[";
+      for (const auto&i : vec) {
+        ss << i << ", ";
+      }
+
+      std::string str = ss.str();
+      str = str.substr(0, str.length() - 2);
+      str += "]";
+      return str;
+    }
+
+  std::string DumpGraph::Tensors() {
     std::stringstream ss;
     Graph& graph = model_.graph();
-
-    ss << "Inputs:";
-    for (const auto& i : graph.Inputs()) {
-      ss << " " << i;
-    }
-    ss << "\n";
-
-    ss << "Outputs:";
-    for (const auto& i : graph.Outputs()) {
-      ss << " " << i;
-    }
-    ss << "\n";
 
     ss << "\nTensors:\n";
     int count = 0;
@@ -32,6 +35,14 @@ namespace nnt {
       ss << "] ";
       ss << "buffer: " << tensor.buffer_index() << "\n";
     }
+
+    ss << "\n";
+    return ss.str();
+  }
+
+  std::string DumpGraph::Operators() {
+    std::stringstream ss;
+    Graph& graph = model_.graph();
 
     ss << "\nOperators:\n";
     for (const auto& op: graph.Operators()) {
@@ -52,6 +63,54 @@ namespace nnt {
     }
 
     ss << "\n";
+    return ss.str();
+  }
+
+
+  std::string DumpGraph::Info() {
+    std::stringstream ss;
+
+    Graph& graph = model_.graph();
+    const auto& tensors = graph.Tensors();
+
+    ss << "::Inputs::\n";
+    for (const auto& i : graph.Inputs()) {
+      ss << " " << tensors[i].name() << "<" << TensorType(tensors[i]) << ">"
+        << " [" << TensorShape(tensors[i]) << "]";
+
+      if (tensors[i].HasQuantization()) {
+        ss << " (quantized)\n";
+        const QuantizationParameters& quant = tensors[i].quantization();
+        ss << "   └─ Quant: {min:" << VectorToStr(quant.min) << ", max:"
+          << VectorToStr(quant.max) << ", scale: " << VectorToStr(quant.scale)
+          << ", zero_point:" << VectorToStr(quant.zero_point) << "}\n";
+      } else {
+        ss << "\n";
+      }
+    }
+
+    ss << "\n";
+    ss << "::Outputs::\n";
+    for (const auto& i : graph.Outputs()) {
+      ss << " " << tensors[i].name() << "<" << TensorType(tensors[i]) << ">"
+        << " [" << TensorShape(tensors[i]) << "]";
+
+      if (tensors[i].HasQuantization()) {
+        ss << " (quantized)\n";
+      } else {
+        ss << "\n";
+      }
+    }
+
+    ss << "\n";
+    return ss.str();
+  }
+
+
+  std::string DumpGraph::Weights() {
+    std::stringstream ss;
+    Graph& graph = model_.graph();
+
     return ss.str();
   }
 
@@ -93,56 +152,6 @@ namespace nnt {
     return ss.str();
   }
 
-  std::string DumpGraph::Weights() {
-    std::stringstream ss;
-    Graph& graph = model_.graph();
-
-    ss << "Inputs:";
-    for (const auto& i : graph.Inputs()) {
-      ss << " " << i;
-    }
-    ss << "\n";
-
-    ss << "Outputs:";
-    for (const auto& i : graph.Outputs()) {
-      ss << " " << i;
-    }
-    ss << "\n";
-
-    ss << "\nTensors:\n";
-    int count = 0;
-    for (const auto& tensor: graph.Tensors()) {
-      ss << "[" << count++ << "] ";
-      ss << "name: " << tensor.name() << " [ ";
-      for (const auto&i : tensor.shape()) {
-        ss << i << " ";
-      }
-      ss << "] ";
-      ss << "buffer: " << tensor.buffer_index() << "\n";
-    }
-
-    ss << "\nOperators:\n";
-    for (const auto& op: graph.Operators()) {
-      ss << "index: " << op.index() << ", ";
-      ss << "builtin_op: " << op.builtin_op_str() << ", ";
-
-      ss << "inputs:";
-      for (const auto& i : op.inputs()) {
-        ss << " " << i;
-      }
-      ss << ", ";
-
-      ss << "outputs:";
-      for (const auto& i : op.outputs()) {
-        ss << " " << i;
-      }
-      ss << "\n";
-    }
-
-    ss << "\n";
-    return ss.str();
-  }
-
   std::string DumpGraph::TensorType(const Tensor& tensor) {
     switch (tensor.tensor_type()) {
       case TensorType::FLOAT32:
@@ -178,59 +187,8 @@ namespace nnt {
     return std::string();
   }
 
-  template<class T>
-    std::string VectorToStr(const std::vector<T>& vec) {
-      std::stringstream ss;
 
-      ss << "[";
-      for (const auto&i : vec) {
-        ss << i << ", ";
-      }
 
-      std::string str = ss.str();
-      str = str.substr(0, str.length() - 2);
-      str += "]";
-      return str;
-    }
-
-  std::string DumpGraph::Info() {
-    std::stringstream ss;
-
-    Graph& graph = model_.graph();
-    const auto& tensors = graph.Tensors();
-
-    ss << "::Inputs::\n";
-    for (const auto& i : graph.Inputs()) {
-      ss << " " << tensors[i].name() << "<" << TensorType(tensors[i]) << ">"
-        << " [" << TensorShape(tensors[i]) << "]";
-
-      if (tensors[i].HasQuantization()) {
-        ss << " (quantized)\n";
-        const QuantizationParameters& quant = tensors[i].quantization();
-        ss << "   └─ Quant: {min:" << VectorToStr(quant.min) << ", max:"
-          << VectorToStr(quant.max) << ", scale: " << VectorToStr(quant.scale)
-          << ", zero_point:" << VectorToStr(quant.zero_point) << "}\n";
-      } else {
-        ss << "\n";
-      }
-    }
-
-    ss << "\n";
-    ss << "::Outputs::\n";
-    for (const auto& i : graph.Outputs()) {
-      ss << " " << tensors[i].name() << "<" << TensorType(tensors[i]) << ">"
-        << " [" << TensorShape(tensors[i]) << "]";
-
-      if (tensors[i].HasQuantization()) {
-        ss << " (quantized)\n";
-      } else {
-        ss << "\n";
-      }
-    }
-
-    ss << "\n";
-    return ss.str();
-  }
 
   std::string DumpGraph::FormatTensorName(const std::string& name) {
     size_t pos = name.find_last_of('/');

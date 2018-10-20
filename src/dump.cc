@@ -111,6 +111,33 @@ namespace nnt {
     std::stringstream ss;
     Graph& graph = model_.graph();
 
+    ss << "\nOperators:\n";
+    for (const auto& op: graph.Operators()) {
+      ss << "index: " << op.index() << ", ";
+      ss << "builtin_op: " << op.builtin_op_str() << ", ";
+
+      ss << "inputs:";
+      for (const auto& i : op.inputs()) {
+        ss << " " << i;
+      }
+      ss << ", ";
+
+      ss << "outputs:";
+      for (const auto& i : op.outputs()) {
+        ss << " " << i;
+      }
+
+      ss << "\n └─input shapes:";
+      for (const auto& input : op.inputs()) {
+        ss << "  " << input << " : " << VectorToStr(graph.Tensors()[input].shape());
+      }
+      ss << "\n";
+
+    }
+
+    return ss.str();
+
+
     ss << "\n";
     return ss.str();
   }

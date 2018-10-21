@@ -130,19 +130,23 @@ namespace nnt {
       ss << "\n └─input shapes:";
       for (const auto& input : op.inputs()) {
         const Tensor& tensor = graph.Tensors()[input];
-        std::vector<unsigned char> data = tensor.buffer().Data();
+        std::vector<unsigned char> tensor_data = tensor.buffer().Data();
+        std::vector<float> data_array(tensor_data.begin(), tensor_data.end());
+
         ss << "  " << input << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
-        ss << "," << "d=" << VectorToStr(std::vector<float>(data.begin(), data.end()));
+        ss << "," << "d=" << data_array.size();
       }
 
       ss << "\n └─output shapes:";
       for (const auto& output : op.outputs()) {
         const Tensor& tensor = graph.Tensors()[output];
-        std::vector<unsigned char> data = tensor.buffer().Data();
+        std::vector<unsigned char> tensor_data = tensor.buffer().Data();
+        std::vector<float> data_array (tensor_data.begin(), tensor_data.end());
+
         ss << "  " << output << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
-        ss << "," << "d=" << VectorToStr(std::vector<float>(data.begin(), data.end()));
+        ss << "," << "d=" << data_array.size();
       }
 
       ss << "\n";

@@ -106,6 +106,58 @@ namespace nnt {
     return ss.str();
   }
 
+  std::vector<float> ByteVectorToFloatVector(std::vector<unsigned char> bytes)
+  {
+    std::vector<float> floats;
+
+    union {unsigned char as_bytes[4]; float as_float;} helper_union;
+
+    assert(bytes.size() % 4 == 0);
+    floats.reserve(bytes.size() / 4);
+
+    for (size_t i = 0; i < bytes.size(); i += 4) {
+      float float_copy = 0.0f;
+      for (int j = 0; j < 4; j++)
+        helper_union.as_bytes[j] = bytes[i + j];
+      float_copy = helper_union.as_float;
+      floats.push_back(float_copy);
+    }
+
+    return floats;
+  }
+
+ std::vector<int32_t> ByteVectorToInt32Vector(std::vector<unsigned char> bytes)
+ {
+    std::vector<int32_t> int32s;
+
+    union {unsigned char as_bytes[4]; int32_t as_int32;} helper_union;
+
+    assert(bytes.size() % 4 == 0);
+    int32s.reserve(bytes.size() / 4);
+
+    for (size_t i = 0; i < bytes.size(); i += 4) {
+      int32_t int32_copy = 0.0f;
+      for (int j = 0; j < 4; j++)
+        helper_union.as_bytes[j] = bytes[i + j];
+      int32_copy = helper_union.as_int32;
+      int32s.push_back(int32_copy);
+    }
+
+    return int32s;
+  }
+
+ std::vector<uint16_t> ByteVectorToUInt8Vector(std::vector<unsigned char> bytes)
+  {
+    std::vector<uint16_t> uint16s;
+
+    uint16s.reserve(bytes.size());
+
+    for (size_t i = 0; i < bytes.size(); ++i) {
+      uint16s.push_back(bytes[i]);
+    }
+
+    return uint16s;
+  }
 
   std::string DumpGraph::Weights() {
     std::stringstream ss;
@@ -131,22 +183,43 @@ namespace nnt {
       for (const auto& input : op.inputs()) {
         const Tensor& tensor = graph.Tensors()[input];
         std::vector<unsigned char> tensor_data = tensor.buffer().Data();
-        std::vector<float> data_array(tensor_data.begin(), tensor_data.end());
 
         ss << "  " << input << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
-        ss << "," << "d=" << data_array.size();
+        if (tensor_data.size() == 0) {
+          ss << "," << "d=" << "[]";
+        } else if (tensor.tensor_type() == TensorType::FLOAT32) {
+          std::vector<float> data_array(ByteVectorToFloatVector(tensor_data));
+          ss << "," << "d=" << VectorToStr(data_array);
+        } else if (tensor.tensor_type() == TensorType::INT32) {
+          std::vector<int32_t> data_array(ByteVectorToInt32Vector(tensor_data));
+          ss << "," << "d=" << VectorToStr(data_array);
+        } else if (tensor.tensor_type() == TensorType::UINT8) {
+          std::vector<uint16_t> data_array(ByteVectorToUInt8Vector(tensor_data));
+          ss << "," << "d=" << VectorToStr(data_array);
+        }
       }
 
       ss << "\n └─output shapes:";
       for (const auto& output : op.outputs()) {
         const Tensor& tensor = graph.Tensors()[output];
         std::vector<unsigned char> tensor_data = tensor.buffer().Data();
-        std::vector<float> data_array (tensor_data.begin(), tensor_data.end());
+        std::vector<float> data_array(ByteVectorToFloatVector(tensor_data));
 
         ss << "  " << output << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
-        ss << "," << "d=" << data_array.size();
+        if (tensor_data.size() == 0) {
+          ss << "," << "d=" << "[]";
+        } else if (tensor.tensor_type() == TensorType::FLOAT32) {
+          std::vector<float> data_array(ByteVectorToFloatVector(tensor_data));
+          ss << "," << "d=" << VectorToStr(data_array);
+        } else if (tensor.tensor_type() == TensorType::INT32) {
+          std::vector<int32_t> data_array(ByteVectorToInt32Vector(tensor_data));
+          ss << "," << "d=" << VectorToStr(data_array);
+        } else if (tensor.tensor_type() == TensorType::UINT8) {
+          std::vector<uint16_t> data_array(ByteVectorToUInt8Vector(tensor_data));
+          ss << "," << "d=" << VectorToStr(data_array);
+        }
       }
 
       ss << "\n";

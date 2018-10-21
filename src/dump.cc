@@ -5,20 +5,128 @@
 
 namespace nnt {
 
-  template<class T>
-    std::string VectorToStr(const std::vector<T>& vec) {
-      std::stringstream ss;
+  template<class T>std::string VectorToStrWithShape(const std::vector<T>& vec, const std::vector<int>& shape)
+  {
+    std::string str;
 
-      ss << "[";
-      for (const auto&i : vec) {
-        ss << i << ", ";
+    switch (shape.size()) {
+    case 0:
+      str = "";
+      break;
+    case 1:
+      assert(vec.size() > 0);
+      assert(vec.size() == (size_t)(shape[0]));
+
+      str += "[ ";
+
+      for (int i = 0; i < shape[0]; ++i) {
+        str += std::to_string(vec[i]);
+        str += ", ";
       }
+      if (shape[0] > 0)
+        str = str.substr(0, str.length() - 2);
 
-      std::string str = ss.str();
-      str = str.substr(0, str.length() - 2);
       str += "]";
-      return str;
+      break;
+    case 2:
+      assert(vec.size() > 0);
+      assert(vec.size() == (size_t)(shape[0] * shape[1]));
+
+      str += "[ ";
+
+      for (int i = 0; i < shape[0]; ++i) {
+        str += "[ ";
+        for (int j = 0; j < shape[1]; ++j) {
+            str += std::to_string(vec[i * (shape[1])
+                + j]);
+            str += ", ";
+        }
+        if (shape[1] > 0)
+          str = str.substr(0, str.length() - 2);
+        str += "], ";
+      }
+      // str = str.substr(0, str.length() - 2);
+      str += "]";
+      break;
+    case 3:
+      assert(vec.size() > 0);
+      assert(vec.size() == (size_t)(shape[0] * shape[1] * shape[2]));
+
+      str += "[ ";
+
+      for (int i = 0; i < shape[0]; ++i) {
+        str += "[ ";
+        for (int j = 0; j < shape[1]; ++j) {
+          str += "[ ";
+          for (int k = 0; k < shape[2]; ++k) {
+            str += std::to_string(vec[i * (shape[1] * shape[2])
+                + j * (shape[2])
+                + k]);
+            str += ", ";
+          }
+          if (shape[2] > 0)
+            str = str.substr(0, str.length() - 2);
+          str += "], ";
+        }
+        str += "], ";
+      }
+      // str = str.substr(0, str.length() - 2);
+      str += "]";
+      break;
+    case 4:
+      assert(vec.size() > 0);
+      assert(vec.size() == (size_t)(shape[0] * shape[1] * shape[2] * shape[3]));
+
+      str += "[ ";
+
+      for (int i = 0; i < shape[0]; ++i) {
+        str += "[ ";
+        for (int j = 0; j < shape[1]; ++j) {
+          str += "[ ";
+          for (int k = 0; k < shape[2]; ++k) {
+            str += "[";
+            for (int l = 0; l < shape[3]; ++l) {
+              str += std::to_string(vec[i * (shape[1] * shape[2] * shape[3])
+                  + j * (shape[2] * shape[3])
+                  + k * (shape[3])
+                  + l]);
+              str += ", ";
+            }
+            if (shape[3] > 0)
+              str = str.substr(0, str.length() - 2);
+            str += "], ";
+          }
+          str += "], ";
+        }
+        str += "], ";
+      }
+      str += "]";
+      break;
+    default:
+      str = "Shape outside [0, 4] range.";
     }
+
+    str += "\n";
+
+    return str;
+  }
+
+  template<class T>std::string VectorToStr(const std::vector<T>& vec)
+  {
+    std::stringstream ss;
+
+    ss << "[";
+    for (const auto& i : vec) {
+      ss << i << ", ";
+    }
+
+    std::string str = ss.str();
+    if (vec.size() > 0)
+      str = str.substr(0, str.length() - 2);
+    str += "]";
+
+    return str;
+  }
 
   std::string DumpGraph::Tensors() {
     std::stringstream ss;
@@ -179,7 +287,7 @@ namespace nnt {
         ss << " " << i;
       }
 
-      ss << "\n └─input shapes:";
+      ss << "\n + input shapes:\n";
       for (const auto& input : op.inputs()) {
         const Tensor& tensor = graph.Tensors()[input];
         std::vector<unsigned char> tensor_data = tensor.buffer().Data();
@@ -187,20 +295,20 @@ namespace nnt {
         ss << "  " << input << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
         if (tensor_data.size() == 0) {
-          ss << "," << "d=" << "[]";
+          ss << "," << "d=" << "\n" << "[]" << "\n";
         } else if (tensor.tensor_type() == TensorType::FLOAT32) {
           std::vector<float> data_array(ByteVectorToFloatVector(tensor_data));
-          ss << "," << "d=" << VectorToStr(data_array);
+          ss << "," << "d=" << "\n" << VectorToStrWithShape(data_array, tensor.shape());
         } else if (tensor.tensor_type() == TensorType::INT32) {
           std::vector<int32_t> data_array(ByteVectorToInt32Vector(tensor_data));
-          ss << "," << "d=" << VectorToStr(data_array);
+          ss << "," << "d=" << "\n" << VectorToStrWithShape(data_array, tensor.shape());
         } else if (tensor.tensor_type() == TensorType::UINT8) {
           std::vector<uint16_t> data_array(ByteVectorToUInt8Vector(tensor_data));
-          ss << "," << "d=" << VectorToStr(data_array);
+          ss << "," << "d=" << "\n" << VectorToStrWithShape(data_array, tensor.shape());
         }
       }
 
-      ss << "\n └─output shapes:";
+      ss << "\n + output shapes:\n";
       for (const auto& output : op.outputs()) {
         const Tensor& tensor = graph.Tensors()[output];
         std::vector<unsigned char> tensor_data = tensor.buffer().Data();
@@ -208,18 +316,6 @@ namespace nnt {
 
         ss << "  " << output << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
-        if (tensor_data.size() == 0) {
-          ss << "," << "d=" << "[]";
-        } else if (tensor.tensor_type() == TensorType::FLOAT32) {
-          std::vector<float> data_array(ByteVectorToFloatVector(tensor_data));
-          ss << "," << "d=" << VectorToStr(data_array);
-        } else if (tensor.tensor_type() == TensorType::INT32) {
-          std::vector<int32_t> data_array(ByteVectorToInt32Vector(tensor_data));
-          ss << "," << "d=" << VectorToStr(data_array);
-        } else if (tensor.tensor_type() == TensorType::UINT8) {
-          std::vector<uint16_t> data_array(ByteVectorToUInt8Vector(tensor_data));
-          ss << "," << "d=" << VectorToStr(data_array);
-        }
       }
 
       ss << "\n";

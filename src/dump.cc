@@ -27,10 +27,9 @@ namespace nnt {
         str += std::to_string(vec[i]);
         str += ", ";
       }
-      if (shape[0] > 0)
-        str = str.substr(0, str.length() - 2);
+      str = str.substr(0, str.length() - 2);
 
-      str += "]";
+      str += " ]";
       break;
     case 2:
       if (vec.size() == 0) {
@@ -48,12 +47,11 @@ namespace nnt {
                 + j]);
             str += ", ";
         }
-        if (shape[1] > 0)
-          str = str.substr(0, str.length() - 2);
+        str = str.substr(0, str.length() - 2);
         str += "], ";
       }
-      // str = str.substr(0, str.length() - 2);
-      str += "]";
+      str = str.substr(0, str.length() - 2);
+      str += " ]";
       break;
     case 3:
       if (vec.size() == 0) {
@@ -74,13 +72,13 @@ namespace nnt {
                 + k]);
             str += ", ";
           }
-          if (shape[2] > 0)
-            str = str.substr(0, str.length() - 2);
+          str = str.substr(0, str.length() - 2);
           str += "], ";
         }
-        str += "], ";
+        str = str.substr(0, str.length() - 2);
+        str += " ], ";
       }
-      // str = str.substr(0, str.length() - 2);
+      str = str.substr(0, str.length() - 2);
       str += "]";
       break;
     case 4:
@@ -131,14 +129,19 @@ namespace nnt {
   {
     std::stringstream ss;
 
-    ss << "[";
+    if (vec.size() == 0) {
+      ss << "[ ]";
+      return ss.str();
+    }
+
+    ss << "[" ;
     for (const auto& i : vec) {
       ss << i << ", ";
     }
 
     std::string str = ss.str();
-    if (vec.size() > 0)
-      str = str.substr(0, str.length() - 2);
+    str = str.substr(0, str.length() - 2);
+
     str += "]";
 
     return str;
@@ -238,7 +241,7 @@ namespace nnt {
         ss << " " << i;
       }
 
-      ss << "\n + input shapes:\n";
+      ss << "\n + input tensors:\n";
       for (const auto& input : op.inputs()) {
         const Tensor& tensor = graph.Tensors()[input];
         std::vector<unsigned char> tensor_data = tensor.buffer().Data();
@@ -259,7 +262,7 @@ namespace nnt {
         }
       }
 
-      ss << "\n + output shapes:\n";
+      ss << "\n + output tensors:\n";
       for (const auto& output : op.outputs()) {
         const Tensor& tensor = graph.Tensors()[output];
         std::vector<unsigned char> tensor_data = tensor.buffer().Data();

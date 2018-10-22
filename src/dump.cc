@@ -292,7 +292,7 @@ namespace nnt {
         const Tensor& tensor = graph.Tensors()[input];
         std::vector<unsigned char> tensor_data = tensor.buffer().Data();
 
-        ss << "  " << input << ":s=" << VectorToStr(tensor.shape());
+        ss << "   * " << input << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
         if (tensor_data.size() == 0) {
           ss << "," << "d=" << "\n" << "[]" << "\n";
@@ -314,10 +314,10 @@ namespace nnt {
         std::vector<unsigned char> tensor_data = tensor.buffer().Data();
         std::vector<float> data_array(ByteVectorToFloatVector(tensor_data));
 
-        ss << "  " << output << ":s=" << VectorToStr(tensor.shape());
+        ss << "   * " << output << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
       }
-
+      ss << "\n";
       ss << "\n";
     }
 

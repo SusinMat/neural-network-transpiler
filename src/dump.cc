@@ -106,18 +106,20 @@ namespace nnt {
                   + l]);
               str += ", ";
             }
-            if (shape[3] > 0)
-              str = str.substr(0, str.length() - 2);
+            str = str.substr(0, str.length() - 2);
             str += " ], ";
           }
-          str += "], ";
+          str = str.substr(0, str.length() - 2);
+          str += " ], ";
         }
-        str += "], ";
+        str = str.substr(0, str.length() - 2);
+        str += " ], ";
       }
-      str += "]";
+      str = str.substr(0, str.length() - 2);
+      str += " ]";
       break;
     default:
-      str = "Shape vector is not a  [0-4]D vector.";
+      str = "Shape vector is not a [0-4]D vector.";
     }
 
     str += "\n";

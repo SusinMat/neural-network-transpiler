@@ -11,10 +11,14 @@ namespace nnt {
 
     switch (shape.size()) {
     case 0:
-      str = "";
+      str = "Empty shape vector";
       break;
     case 1:
-      assert(vec.size() > 0);
+      if (vec.size() == 0) {
+        assert(shape[0] == 1);
+        str = "[ ]";
+        break;
+      }
       assert(vec.size() == (size_t)(shape[0]));
 
       str += "[ ";
@@ -29,7 +33,10 @@ namespace nnt {
       str += "]";
       break;
     case 2:
-      assert(vec.size() > 0);
+      if (vec.size() == 0) {
+        str = "Empty data vector";
+        break;
+      }
       assert(vec.size() == (size_t)(shape[0] * shape[1]));
 
       str += "[ ";
@@ -49,7 +56,10 @@ namespace nnt {
       str += "]";
       break;
     case 3:
-      assert(vec.size() > 0);
+      if (vec.size() == 0) {
+        str = "Empty data vector";
+        break;
+      }
       assert(vec.size() == (size_t)(shape[0] * shape[1] * shape[2]));
 
       str += "[ ";
@@ -74,7 +84,11 @@ namespace nnt {
       str += "]";
       break;
     case 4:
-      assert(vec.size() > 0);
+      if (vec.size() == 0) {
+        str = "Empty data vector";
+        break;
+      }
+
       assert(vec.size() == (size_t)(shape[0] * shape[1] * shape[2] * shape[3]));
 
       str += "[ ";
@@ -84,7 +98,7 @@ namespace nnt {
         for (int j = 0; j < shape[1]; ++j) {
           str += "[ ";
           for (int k = 0; k < shape[2]; ++k) {
-            str += "[";
+            str += "[ ";
             for (int l = 0; l < shape[3]; ++l) {
               str += std::to_string(vec[i * (shape[1] * shape[2] * shape[3])
                   + j * (shape[2] * shape[3])
@@ -94,7 +108,7 @@ namespace nnt {
             }
             if (shape[3] > 0)
               str = str.substr(0, str.length() - 2);
-            str += "], ";
+            str += " ], ";
           }
           str += "], ";
         }
@@ -103,7 +117,7 @@ namespace nnt {
       str += "]";
       break;
     default:
-      str = "Shape outside [0, 4] range.";
+      str = "Shape vector is not a  [0-4]D vector.";
     }
 
     str += "\n";
@@ -295,7 +309,7 @@ namespace nnt {
         ss << "   * " << input << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
         if (tensor_data.size() == 0) {
-          ss << "," << "d=" << "\n" << "[]" << "\n";
+          ss << "," << "d=" << "\n" << VectorToStrWithShape(tensor_data, tensor.shape());
         } else if (tensor.tensor_type() == TensorType::FLOAT32) {
           std::vector<float> data_array(ByteVectorToFloatVector(tensor_data));
           ss << "," << "d=" << "\n" << VectorToStrWithShape(data_array, tensor.shape());

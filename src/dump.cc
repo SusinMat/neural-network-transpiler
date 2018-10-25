@@ -188,8 +188,8 @@ namespace nnt {
     return floats;
   }
 
- std::vector<int32_t> ByteVectorToInt32Vector(std::vector<unsigned char> bytes)
- {
+  std::vector<int32_t> ByteVectorToInt32Vector(std::vector<unsigned char> bytes)
+  {
     std::vector<int32_t> int32s;
 
     union {unsigned char as_bytes[4]; int32_t as_int32;} helper_union;
@@ -208,7 +208,7 @@ namespace nnt {
     return int32s;
   }
 
- std::vector<uint16_t> ByteVectorToUInt8Vector(std::vector<unsigned char> bytes)
+  std::vector<uint16_t> ByteVectorToUInt8Vector(std::vector<unsigned char> bytes)
   {
     std::vector<uint16_t> uint16s;
 
@@ -221,7 +221,8 @@ namespace nnt {
     return uint16s;
   }
 
-  std::string DumpGraph::Weights() {
+  std::string DumpGraph::Weights()
+  {
     std::stringstream ss;
     Graph& graph = model_.graph();
 

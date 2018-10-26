@@ -227,28 +227,79 @@ namespace nnt {
     Graph& graph = model_.graph();
 
     ss << "\nOperators:\n";
-    for (const auto& op: graph.Operators()) {
+    for (const auto &op: graph.Operators()) {
+      const BuiltinOptions& options = op.builtin_op();
+      const BuiltinOptionsType options_type = options.type;
       ss << "index: " << op.index() << ", ";
-      ss << "builtin_op: " << op.builtin_op_str() << ", ";
+      // ss << "builtin_op: " << op.builtin_op_str() << "(" << (int)options_type << "), ";
+      ss << "builtin_op: " << op.builtin_op_str() << " ";
+      switch(options_type) {
+        case BuiltinOptionsType::Conv2DOptions:
+          {
+            const Conv2DOptions &downcast_opt = static_cast<const Conv2DOptions &>(options);
 
+            // ss << "o={ ";
+          }
+          break;
+        case BuiltinOptionsType::DepthwiseConv2DOptions:
+          {
+            const DepthwiseConv2DOptions &downcast_opt = static_cast<const DepthwiseConv2DOptions &>(options);
+          }
+          break;
+        case BuiltinOptionsType::Pool2DOptions:
+          {
+            const Pool2DOptions &downcast_opt = static_cast<const Pool2DOptions &>(options);
+          }
+          break;
+        case BuiltinOptionsType::FullyConnectedOptions:
+          {
+            const FullyConnectedOptions &downcast_opt = static_cast<const FullyConnectedOptions &>(options);
+          }
+          break;
+        case BuiltinOptionsType::SoftmaxOptions:
+          {
+            const SoftmaxOptions &downcast_opt = static_cast<const SoftmaxOptions &>(options);
+          }
+          break;
+        case BuiltinOptionsType::ConcatenationOptions:
+          {
+            const ConcatenationOptions &downcast_opt = static_cast<const ConcatenationOptions &>(options);
+          }
+          break;
+        case BuiltinOptionsType::ReshapeOptions:
+          {
+            const ReshapeOptions &downcast_opt = static_cast<const ReshapeOptions &>(options);
+          }
+          break;
+        case BuiltinOptionsType::SqueezeOptions:
+          {
+            const SqueezeOptions &downcast_opt = static_cast<const SqueezeOptions &>(options);
+          }
+          break;
+        default:
+          std::cout << "Error: DumpGraph::Weights() function is unprepared to handle the options of this operation: " << op.builtin_op_str();
+          exit(EXIT_FAILURE);
+          break;
+      }
       ss << "inputs:";
-      for (const auto& i : op.inputs()) {
+      for (const auto &i : op.inputs()) {
         ss << " " << i;
       }
       ss << ", ";
 
       ss << "outputs:";
-      for (const auto& i : op.outputs()) {
+      for (const auto &i : op.outputs()) {
         ss << " " << i;
       }
 
       ss << "\n + input tensors:\n";
-      for (const auto& input : op.inputs()) {
-        const Tensor& tensor = graph.Tensors()[input];
+      for (const auto &input : op.inputs()) {
+        const Tensor &tensor = graph.Tensors()[input];
         std::vector<unsigned char> tensor_data = tensor.buffer().Data();
 
         ss << "   * " << input << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
+#if 0
         if (tensor_data.size() == 0) {
           ss << "," << "d=" << "\n" << VectorToStrWithShape(tensor_data, tensor.shape());
         } else if (tensor.tensor_type() == TensorType::FLOAT32) {
@@ -261,11 +312,14 @@ namespace nnt {
           std::vector<uint16_t> data_array(ByteVectorToUInt8Vector(tensor_data));
           ss << "," << "d=" << "\n" << VectorToStrWithShape(data_array, tensor.shape());
         }
+#else
+        ss << "\n";
+#endif
       }
 
       ss << "\n + output tensors:\n";
-      for (const auto& output : op.outputs()) {
-        const Tensor& tensor = graph.Tensors()[output];
+      for (const auto &output : op.outputs()) {
+        const Tensor &tensor = graph.Tensors()[output];
         std::vector<unsigned char> tensor_data = tensor.buffer().Data();
         std::vector<float> data_array(ByteVectorToFloatVector(tensor_data));
 

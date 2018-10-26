@@ -245,6 +245,7 @@ namespace nnt {
             ss << "dilation_w_factor=" << downcast_opt.dilation_stride_w << ", ";
             ss << "dilation_h_factor=" << downcast_opt.dilation_stride_h <<", ";
 #endif
+            ss << "fused_activation_function=" << (int16_t)downcast_opt.fused_activation_function << ", ";
           }
           break;
         case BuiltinOptionsType::DepthwiseConv2DOptions:
@@ -254,6 +255,7 @@ namespace nnt {
             ss << "stride_w=" << downcast_opt.stride_w << ", ";
             ss << "stride_h=" << downcast_opt.stride_h << ", ";
             ss << "depth_multiplier=" << downcast_opt.depth_multiplier << ", ";
+            ss << "fused_activation_function=" << (int16_t)downcast_opt.fused_activation_function << ", ";
           }
           break;
         case BuiltinOptionsType::Pool2DOptions:
@@ -264,12 +266,13 @@ namespace nnt {
             ss << "stride_h=" << downcast_opt.stride_h << ", ";
             ss << "filter_width=" << downcast_opt.filter_width << ", ";
             ss << "filter_height=" << downcast_opt.filter_height << ", ";
+            ss << "fused_activation_function=" << (int16_t)downcast_opt.fused_activation_function << ", ";
           }
           break;
         case BuiltinOptionsType::FullyConnectedOptions:
           {
             const FullyConnectedOptions &downcast_opt = static_cast<const FullyConnectedOptions &>(options);
-            (void)downcast_opt;
+            ss << "fused_activation_function=" << (int16_t)downcast_opt.fused_activation_function << ", ";
           }
           break;
         case BuiltinOptionsType::SoftmaxOptions:
@@ -282,6 +285,7 @@ namespace nnt {
           {
             const ConcatenationOptions &downcast_opt = static_cast<const ConcatenationOptions &>(options);
             ss << "axis=" << downcast_opt.axis << ", ";
+            ss << "fused_activation_function=" << (int16_t)downcast_opt.fused_activation_function << ", ";
           }
           break;
         case BuiltinOptionsType::ReshapeOptions:

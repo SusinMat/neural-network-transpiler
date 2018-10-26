@@ -232,55 +232,76 @@ namespace nnt {
       const BuiltinOptionsType options_type = options.type;
       ss << "index: " << op.index() << ", ";
       // ss << "builtin_op: " << op.builtin_op_str() << "(" << (int)options_type << "), ";
-      ss << "builtin_op: " << op.builtin_op_str() << " ";
+      ss << "builtin_op: " << op.builtin_op_str() << ", ";
+      ss << "options: { ";
       switch(options_type) {
         case BuiltinOptionsType::Conv2DOptions:
           {
             const Conv2DOptions &downcast_opt = static_cast<const Conv2DOptions &>(options);
-
-            // ss << "o={ ";
+            ss << "padding=" << (int16_t)downcast_opt.padding << ", ";
+            ss << "stride_w=" << downcast_opt.stride_w << ", ";
+            ss << "stride_h=" << downcast_opt.stride_h << ", ";
+#ifdef NEWER_TENSORFLOW
+            ss << "dilation_w_factor=" << downcast_opt.dilation_stride_w << ", ";
+            ss << "dilation_h_factor=" << downcast_opt.dilation_stride_h <<", ";
+#endif
           }
           break;
         case BuiltinOptionsType::DepthwiseConv2DOptions:
           {
             const DepthwiseConv2DOptions &downcast_opt = static_cast<const DepthwiseConv2DOptions &>(options);
+            ss << "padding=" << (int16_t)downcast_opt.padding << ", ";
+            ss << "stride_w=" << downcast_opt.stride_w << ", ";
+            ss << "stride_h=" << downcast_opt.stride_h << ", ";
+            ss << "depth_multiplier=" << downcast_opt.depth_multiplier << ", ";
           }
           break;
         case BuiltinOptionsType::Pool2DOptions:
           {
             const Pool2DOptions &downcast_opt = static_cast<const Pool2DOptions &>(options);
+            ss << "padding=" << (int16_t)downcast_opt.padding << ", ";
+            ss << "stride_w=" << downcast_opt.stride_w << ", ";
+            ss << "stride_h=" << downcast_opt.stride_h << ", ";
+            ss << "filter_width=" << downcast_opt.filter_width << ", ";
+            ss << "filter_height=" << downcast_opt.filter_height << ", ";
           }
           break;
         case BuiltinOptionsType::FullyConnectedOptions:
           {
             const FullyConnectedOptions &downcast_opt = static_cast<const FullyConnectedOptions &>(options);
+            (void)downcast_opt;
           }
           break;
         case BuiltinOptionsType::SoftmaxOptions:
           {
             const SoftmaxOptions &downcast_opt = static_cast<const SoftmaxOptions &>(options);
+            ss << "beta=" << std::to_string(downcast_opt.beta) << ", ";
           }
           break;
         case BuiltinOptionsType::ConcatenationOptions:
           {
             const ConcatenationOptions &downcast_opt = static_cast<const ConcatenationOptions &>(options);
+            ss << "axis=" << downcast_opt.axis << ", ";
           }
           break;
         case BuiltinOptionsType::ReshapeOptions:
           {
             const ReshapeOptions &downcast_opt = static_cast<const ReshapeOptions &>(options);
+            ss << "new_shape=" << VectorToStr(downcast_opt.new_shape) << ", ";
           }
           break;
         case BuiltinOptionsType::SqueezeOptions:
           {
             const SqueezeOptions &downcast_opt = static_cast<const SqueezeOptions &>(options);
+            ss << "squeeze_dims=" << VectorToStr(downcast_opt.squeeze_dims) << ", ";
           }
           break;
         default:
-          std::cout << "Error: DumpGraph::Weights() function is unprepared to handle the options of this operation: " << op.builtin_op_str();
+          std::cout << "Error: DumpGraph::Weights() function is unprepared to handle the options of this operation: " << op.builtin_op_str() << "\n";
           exit(EXIT_FAILURE);
           break;
       }
+      ss << "}, ";
       ss << "inputs:";
       for (const auto &i : op.inputs()) {
         ss << " " << i;
@@ -299,7 +320,7 @@ namespace nnt {
 
         ss << "   * " << input << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
-#if 0
+#if true
         if (tensor_data.size() == 0) {
           ss << "," << "d=" << "\n" << VectorToStrWithShape(tensor_data, tensor.shape());
         } else if (tensor.tensor_type() == TensorType::FLOAT32) {

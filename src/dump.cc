@@ -339,6 +339,12 @@ namespace nnt {
           ss << "fused_activation_function=" << ActivationFunctionEnumToString(downcast_opt.fused_activation_function) << "(" << (int)downcast_opt.fused_activation_function << ")" << ", ";
           break;
         }
+        case BuiltinOptionsType::AddOptions:
+        {
+          const AddOptions &downcast_opt = static_cast<const AddOptions &>(options);
+          ss << "fused_activation_function=" << ActivationFunctionEnumToString(downcast_opt.fused_activation_function) << "(" << (int)downcast_opt.fused_activation_function << ")" << ", ";
+          break;
+        }
         case BuiltinOptionsType::ReshapeOptions:
         {
           const ReshapeOptions &downcast_opt = static_cast<const ReshapeOptions &>(options);

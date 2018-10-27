@@ -221,6 +221,57 @@ namespace nnt {
     return uint16s;
   }
 
+  std::string PaddingEnumToString(Padding padding)
+  {
+    std::string str = "";
+    switch(padding) {
+      case Padding::UNKNOWN:
+        str = "UNKNOWN";
+        break;
+      case Padding::SAME:
+        str = "SAME";
+        break;
+      case Padding::VALID:
+        str = "VALID";
+        break;
+      default:
+        std::cout << "Error: unkown padding: " << (int)padding << "\n";
+        exit(EXIT_FAILURE);
+        break;
+    }
+    return str;
+  }
+
+  std::string ActivationFunctionEnumToString(ActivationFunctionType activation_function)
+  {
+    std::string str = "";
+    switch(activation_function) {
+      case ActivationFunctionType::NONE:
+        str = "NONE";
+        break;
+      case ActivationFunctionType::RELU:
+        str = "RELU";
+        break;
+      case ActivationFunctionType::RELU1:
+        str = "RELU1";
+        break;
+      case ActivationFunctionType::RELU6:
+        str = "RELU6";
+        break;
+      case ActivationFunctionType::TANH:
+        str = "TANH";
+        break;
+      case ActivationFunctionType::SIGN_BIT:
+        str = "SIGN_BIT";
+        break;
+      default:
+        std::cout << "Error: unkown activation_function: " << (int)activation_function << "\n";
+        exit(EXIT_FAILURE);
+        break;
+    }
+    return str;
+  }
+
   std::string DumpGraph::Weights()
   {
     std::stringstream ss;
@@ -236,70 +287,70 @@ namespace nnt {
       ss << "options: { ";
       switch(options_type) {
         case BuiltinOptionsType::Conv2DOptions:
-          {
-            const Conv2DOptions &downcast_opt = static_cast<const Conv2DOptions &>(options);
-            ss << "padding=" << (int16_t)downcast_opt.padding << ", ";
-            ss << "stride_w=" << downcast_opt.stride_w << ", ";
-            ss << "stride_h=" << downcast_opt.stride_h << ", ";
+        {
+          const Conv2DOptions &downcast_opt = static_cast<const Conv2DOptions &>(options);
+          ss << "padding=" << PaddingEnumToString(downcast_opt.padding) << "(" << (int)downcast_opt.padding << ")" << ", ";
+          ss << "stride_w=" << downcast_opt.stride_w << ", ";
+          ss << "stride_h=" << downcast_opt.stride_h << ", ";
 #ifdef NEWER_TENSORFLOW
-            ss << "dilation_w_factor=" << downcast_opt.dilation_stride_w << ", ";
-            ss << "dilation_h_factor=" << downcast_opt.dilation_stride_h <<", ";
+          ss << "dilation_w_factor=" << downcast_opt.dilation_stride_w << ", ";
+          ss << "dilation_h_factor=" << downcast_opt.dilation_stride_h <<", ";
 #endif
-            ss << "fused_activation_function=" << (int16_t)downcast_opt.fused_activation_function << ", ";
-          }
+          ss << "fused_activation_function=" << ActivationFunctionEnumToString(downcast_opt.fused_activation_function) << "(" << (int)downcast_opt.fused_activation_function << ")" << ", ";
           break;
+        }
         case BuiltinOptionsType::DepthwiseConv2DOptions:
-          {
-            const DepthwiseConv2DOptions &downcast_opt = static_cast<const DepthwiseConv2DOptions &>(options);
-            ss << "padding=" << (int16_t)downcast_opt.padding << ", ";
-            ss << "stride_w=" << downcast_opt.stride_w << ", ";
-            ss << "stride_h=" << downcast_opt.stride_h << ", ";
-            ss << "depth_multiplier=" << downcast_opt.depth_multiplier << ", ";
-            ss << "fused_activation_function=" << (int16_t)downcast_opt.fused_activation_function << ", ";
-          }
+        {
+          const DepthwiseConv2DOptions &downcast_opt = static_cast<const DepthwiseConv2DOptions &>(options);
+          ss << "padding=" << PaddingEnumToString(downcast_opt.padding) << "(" << (int)downcast_opt.padding << ")" << ", ";
+          ss << "stride_w=" << downcast_opt.stride_w << ", ";
+          ss << "stride_h=" << downcast_opt.stride_h << ", ";
+          ss << "depth_multiplier=" << downcast_opt.depth_multiplier << ", ";
+          ss << "fused_activation_function=" << ActivationFunctionEnumToString(downcast_opt.fused_activation_function) << "(" << (int)downcast_opt.fused_activation_function << ")" << ", ";
           break;
+        }
         case BuiltinOptionsType::Pool2DOptions:
-          {
-            const Pool2DOptions &downcast_opt = static_cast<const Pool2DOptions &>(options);
-            ss << "padding=" << (int16_t)downcast_opt.padding << ", ";
-            ss << "stride_w=" << downcast_opt.stride_w << ", ";
-            ss << "stride_h=" << downcast_opt.stride_h << ", ";
-            ss << "filter_width=" << downcast_opt.filter_width << ", ";
-            ss << "filter_height=" << downcast_opt.filter_height << ", ";
-            ss << "fused_activation_function=" << (int16_t)downcast_opt.fused_activation_function << ", ";
-          }
+        {
+          const Pool2DOptions &downcast_opt = static_cast<const Pool2DOptions &>(options);
+          ss << "padding=" << PaddingEnumToString(downcast_opt.padding) << "(" << (int)downcast_opt.padding << ")" << ", ";
+          ss << "stride_w=" << downcast_opt.stride_w << ", ";
+          ss << "stride_h=" << downcast_opt.stride_h << ", ";
+          ss << "filter_width=" << downcast_opt.filter_width << ", ";
+          ss << "filter_height=" << downcast_opt.filter_height << ", ";
+          ss << "fused_activation_function=" << ActivationFunctionEnumToString(downcast_opt.fused_activation_function) << "(" << (int)downcast_opt.fused_activation_function << ")" << ", ";
           break;
+        }
         case BuiltinOptionsType::FullyConnectedOptions:
-          {
-            const FullyConnectedOptions &downcast_opt = static_cast<const FullyConnectedOptions &>(options);
-            ss << "fused_activation_function=" << (int16_t)downcast_opt.fused_activation_function << ", ";
-          }
+        {
+          const FullyConnectedOptions &downcast_opt = static_cast<const FullyConnectedOptions &>(options);
+          ss << "fused_activation_function=" << ActivationFunctionEnumToString(downcast_opt.fused_activation_function) << "(" << (int)downcast_opt.fused_activation_function << ")" << ", ";
           break;
+        }
         case BuiltinOptionsType::SoftmaxOptions:
-          {
-            const SoftmaxOptions &downcast_opt = static_cast<const SoftmaxOptions &>(options);
-            ss << "beta=" << std::to_string(downcast_opt.beta) << ", ";
-          }
+        {
+          const SoftmaxOptions &downcast_opt = static_cast<const SoftmaxOptions &>(options);
+          ss << "beta=" << std::to_string(downcast_opt.beta) << ", ";
           break;
+        }
         case BuiltinOptionsType::ConcatenationOptions:
-          {
-            const ConcatenationOptions &downcast_opt = static_cast<const ConcatenationOptions &>(options);
-            ss << "axis=" << downcast_opt.axis << ", ";
-            ss << "fused_activation_function=" << (int16_t)downcast_opt.fused_activation_function << ", ";
-          }
+        {
+          const ConcatenationOptions &downcast_opt = static_cast<const ConcatenationOptions &>(options);
+          ss << "axis=" << downcast_opt.axis << ", ";
+          ss << "fused_activation_function=" << ActivationFunctionEnumToString(downcast_opt.fused_activation_function) << "(" << (int)downcast_opt.fused_activation_function << ")" << ", ";
           break;
+        }
         case BuiltinOptionsType::ReshapeOptions:
-          {
-            const ReshapeOptions &downcast_opt = static_cast<const ReshapeOptions &>(options);
-            ss << "new_shape=" << VectorToStr(downcast_opt.new_shape) << ", ";
-          }
+        {
+          const ReshapeOptions &downcast_opt = static_cast<const ReshapeOptions &>(options);
+          ss << "new_shape=" << VectorToStr(downcast_opt.new_shape) << ", ";
           break;
+        }
         case BuiltinOptionsType::SqueezeOptions:
-          {
-            const SqueezeOptions &downcast_opt = static_cast<const SqueezeOptions &>(options);
-            ss << "squeeze_dims=" << VectorToStr(downcast_opt.squeeze_dims) << ", ";
-          }
+        {
+          const SqueezeOptions &downcast_opt = static_cast<const SqueezeOptions &>(options);
+          ss << "squeeze_dims=" << VectorToStr(downcast_opt.squeeze_dims) << ", ";
           break;
+        }
         default:
           std::cout << "Error: DumpGraph::Weights() function is unprepared to handle the options of this operation: " << op.builtin_op_str() << "\n";
           exit(EXIT_FAILURE);

@@ -281,9 +281,7 @@ namespace nnt {
     for (const auto &op: graph.Operators()) {
       const BuiltinOptions& options = op.builtin_op();
       const BuiltinOptionsType options_type = options.type;
-      ss << "index: " << op.index() << ", ";
-      // ss << "builtin_op: " << op.builtin_op_str() << "(" << (int)options_type << "), ";
-      ss << "builtin_op: " << op.builtin_op_str() << ", ";
+      ss << "builtin_op: " << op.builtin_op_str() << "(" << op.index()<< "), ";
       ss << "options: { ";
       switch(options_type) {
         case BuiltinOptionsType::Conv2DOptions:

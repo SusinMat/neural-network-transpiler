@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 
@@ -98,11 +99,13 @@ namespace nnt {
           for (int k = 0; k < shape[2]; ++k) {
             str += "[ ";
             for (int l = 0; l < shape[3]; ++l) {
-              str += std::to_string(vec[i * (shape[1] * shape[2] * shape[3])
-                  + j * (shape[2] * shape[3])
-                  + k * (shape[3])
-                  + l]);
-              str += ", ";
+              std::stringstream ss;
+              ss << std::setprecision(std::numeric_limits<T>::digits10 + 1);
+              ss << vec[i * (shape[1] * shape[2] * shape[3])
+                      + j * (shape[2] * shape[3])
+                      + k * (shape[3])
+                      + l];
+              str += ss.str() + ", ";
             }
             str = str.substr(0, str.length() - 2);
             str += " ], ";

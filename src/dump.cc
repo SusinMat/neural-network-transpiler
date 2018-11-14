@@ -26,7 +26,7 @@ namespace nnt {
 
       for (int i = 0; i < shape[0]; ++i) {
         std::stringstream ss;
-        ss << std::setprecision(std::numeric_limits<T>::digits10 + 1);
+        ss << std::setprecision(std::numeric_limits<T>::max_digits10);
         ss << vec[i];
         str += ss.str() + ", ";
       }
@@ -47,7 +47,7 @@ namespace nnt {
         str += "[ ";
         for (int j = 0; j < shape[1]; ++j) {
           std::stringstream ss;
-          ss << std::setprecision(std::numeric_limits<T>::digits10 + 1);
+          ss << std::setprecision(std::numeric_limits<T>::max_digits10);
           ss << vec[i * (shape[1])
                   + j];
           str += ss.str() + ", ";
@@ -73,7 +73,7 @@ namespace nnt {
           str += "[ ";
           for (int k = 0; k < shape[2]; ++k) {
             std::stringstream ss;
-            ss << std::setprecision(std::numeric_limits<T>::digits10 + 1);
+            ss << std::setprecision(std::numeric_limits<T>::max_digits10);
             ss << vec[i * (shape[1] * shape[2])
                     + j * (shape[2])
                     + k];
@@ -106,7 +106,7 @@ namespace nnt {
             str += "[ ";
             for (int l = 0; l < shape[3]; ++l) {
               std::stringstream ss;
-              ss << std::setprecision(std::numeric_limits<T>::digits10 + 1);
+              ss << std::setprecision(std::numeric_limits<T>::max_digits10);
               ss << vec[i * (shape[1] * shape[2] * shape[3])
                       + j * (shape[2] * shape[3])
                       + k * (shape[3])

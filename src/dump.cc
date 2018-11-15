@@ -290,6 +290,7 @@ namespace nnt {
     for (const auto &op: graph.Operators()) {
       const BuiltinOptions& options = op.builtin_op();
       const BuiltinOptionsType options_type = options.type;
+
       ss << "builtin_op: " << op.builtin_op_str() << "(" << op.index()<< "), ";
       ss << "options: { ";
       switch(options_type) {
@@ -325,6 +326,14 @@ namespace nnt {
           ss << "filter_width:" << downcast_opt.filter_width << ", ";
           ss << "filter_height:" << downcast_opt.filter_height << ", ";
           ss << "fused_activation_function:" << ActivationFunctionEnumToString(downcast_opt.fused_activation_function) << "(" << (int)downcast_opt.fused_activation_function << ")" << ", ";
+          if (op.op_code().builtin_code == BuiltinOperator::AVERAGE_POOL_2D) {
+            ss << "pooling_type:" << "AVG" << ", ";
+          } else if (op.op_code().builtin_code == BuiltinOperator::MAX_POOL_2D) {
+            ss << "pooling_type:" << "MAX" << ", ";
+          } else {
+            std::cout << "Error:" << int(op.op_code().builtin_code) << " is an invalid pooling type" << "\n";
+            exit(EXIT_FAILURE);
+          }
           break;
         }
         case BuiltinOptionsType::FullyConnectedOptions:

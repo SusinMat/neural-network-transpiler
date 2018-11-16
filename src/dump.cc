@@ -327,9 +327,9 @@ namespace nnt {
           ss << "filter_height:" << downcast_opt.filter_height << ", ";
           ss << "fused_activation_function:" << ActivationFunctionEnumToString(downcast_opt.fused_activation_function) << "(" << (int)downcast_opt.fused_activation_function << ")" << ", ";
           if (op.op_code().builtin_code == BuiltinOperator::AVERAGE_POOL_2D) {
-            ss << "pooling_type:" << "AVG" << ", ";
+            ss << "pooling_type:" << "\"AVG\"" << ", ";
           } else if (op.op_code().builtin_code == BuiltinOperator::MAX_POOL_2D) {
-            ss << "pooling_type:" << "MAX" << ", ";
+            ss << "pooling_type:" << "\"MAX\"" << ", ";
           } else {
             std::cout << "Error:" << int(op.op_code().builtin_code) << " is an invalid pooling type" << "\n";
             exit(EXIT_FAILURE);

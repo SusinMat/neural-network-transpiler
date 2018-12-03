@@ -292,6 +292,7 @@ namespace nnt {
       const BuiltinOptionsType options_type = options.type;
 
       ss << "builtin_op: " << op.builtin_op_str() << "(" << op.index()<< "), ";
+      // std::cout << "builtin_op: " << op.builtin_op_str() << "(" << op.index()<< "), " << "\n";
       ss << "options: { ";
       switch(options_type) {
         case BuiltinOptionsType::Conv2DOptions:
@@ -353,6 +354,7 @@ namespace nnt {
           const ConcatenationOptions &downcast_opt = static_cast<const ConcatenationOptions &>(options);
           ss << "axis:" << downcast_opt.axis << ", ";
           ss << "fused_activation_function:" << ActivationFunctionEnumToString(downcast_opt.fused_activation_function) << "(" << (int)downcast_opt.fused_activation_function << ")" << ", ";
+          // std::cout << "axis:" << downcast_opt.axis << ", " << "fused_activation_function:" << ActivationFunctionEnumToString(downcast_opt.fused_activation_function) << "(" << (int)downcast_opt.fused_activation_function << ")" << ", " << "\n";
           break;
         }
         case BuiltinOptionsType::AddOptions:

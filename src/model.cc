@@ -9,6 +9,10 @@ namespace nnt {
 
 FlatBufferModel::FlatBufferModel(const std::string& fname) {
   FILE* file = fopen(fname.c_str(), "rb");
+  if (file == NULL) {
+    std::cout << "Error: file " << fname << " does not exist." << "\n";
+    exit(EXIT_FAILURE);
+  }
   fseek(file, 0L, SEEK_END);
   int length = ftell(file);
   fseek(file, 0L, SEEK_SET);

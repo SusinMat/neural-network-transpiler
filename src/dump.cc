@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -281,6 +282,24 @@ namespace nnt {
     return str;
   }
 
+  std::string QuantizationParamsToStr(const Tensor &tensor)
+  {
+    std::stringstream ss;
+    const QuantizationParameters &quantization = tensor.quantization();
+    const std::streamsize default_stringstream_precision = ss.precision();
+    const float quantization_min = (quantization.min.size() > 0) ? quantization.min[0] : NAN;
+    const float quantization_max = (quantization.max.size() > 0) ? quantization.max[0] : NAN;
+
+    ss << std::setprecision(std::numeric_limits<float>::max_digits10);
+    ss << "[" << quantization_min;
+    ss << ", " << quantization_max;
+    ss << ", "   << quantization.scale[0];
+    ss <<", "    << quantization.zero_point[0] << "]";
+    ss << std::setprecision(default_stringstream_precision);
+
+    return ss.str();
+  }
+
   std::string DumpGraph::Weights()
   {
     std::stringstream ss;
@@ -399,6 +418,11 @@ namespace nnt {
 
         ss << "   * " << input << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
+        if (tensor.HasQuantization()) {
+          ss << ",q=";
+          ss << QuantizationParamsToStr(tensor);
+        }
+
 #if true
         if (tensor_data.size() == 0) {
           ss << "," << "d=" << "\n" << VectorToStrWithShape(tensor_data, tensor.shape());
@@ -425,6 +449,10 @@ namespace nnt {
 
         ss << "   * " << output << ":s=" << VectorToStr(tensor.shape());
         ss << "," << "t=" << TensorType(tensor);
+        if (tensor.HasQuantization()) {
+          ss << ",q=";
+          ss << QuantizationParamsToStr(tensor);
+        }
       }
       ss << "\n";
       ss << "\n";

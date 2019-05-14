@@ -129,8 +129,8 @@ int main(int argc, char **argv)
       PrintWeights(str_model);
     }
 
-    if (vm.count("dot") != 0) {
-      str_dot = vm["dot"].as<std::string>();
+    if (vm.count("graph") != 0) {
+      str_dot = vm["graph"].as<std::string>();
       GenerateDotFile(str_dot, str_model);
       return 0;
     }

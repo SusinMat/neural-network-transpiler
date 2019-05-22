@@ -394,6 +394,22 @@ namespace nnt {
           ss << "squeeze_dims:" << VectorToStr(downcast_opt.squeeze_dims) << ", ";
           break;
         }
+        case BuiltinOptionsType::PadOptions:
+        {
+          const PadOptions &downcast_opt = static_cast<const PadOptions &>(options);
+        }
+        break;
+        case BuiltinOptionsType::MulOptions:
+        {
+          const MulOptions &downcast_opt = static_cast<const MulOptions &>(options);
+        }
+        break;
+        case BuiltinOptionsType::MeanOptions:
+        {
+          const MeanOptions &downcast_opt = static_cast<const MeanOptions &>(options);
+          ss << "keep_dims:" << std::to_string(downcast_opt.keep_dims) << ", ";
+        }
+        break;
         default:
           std::cout << "Error: DumpGraph::Weights() function is unprepared to handle the options of this operation: " << op.builtin_op_str() << "\n";
           exit(EXIT_FAILURE);
